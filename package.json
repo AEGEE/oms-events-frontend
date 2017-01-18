@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Frontend part of the OMS events module.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "lint": "node_modules/.bin/eslint ."
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AEGEE/oms-events-frontend.git"
