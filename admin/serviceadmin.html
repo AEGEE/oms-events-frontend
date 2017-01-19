@@ -1,7 +1,6 @@
 <div class="row">
 	<div class="col-lg-6">
 		<h3>Service status</h3>
-		
 		<div class="row">
 			<div class="col-sm-3">Uptime</div>
 			<div class="col-sm-6">{{ status.uptime }}</div>
@@ -46,44 +45,79 @@
 </div>
 
 <div class="row">
-	<h3>Role Management</h3>
-	<form>
-
-	<div class="form-group">
-		<label class="control-label col-sm-3">Summer University Admin</label>
-		<div class="input-group col-sm-6">
-			<select class="form-control" ng-model="su_admin" ng-options="role.name for role in roles">
-				<option value="">-- choose role --</option>
-			</select>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<label class="control-label col-sm-3">Statutory Admin</label>
-		<div class="input-group col-sm-6">
-			<select class="form-control" ng-model="statutory_admin" ng-options="role.name for role in roles">
-				<option value="">-- choose role --</option>
-			</select>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<label class="control-label col-sm-3">Non-Statutory Admin</label>
-		<div class="input-group col-sm-6">
-			<select class="form-control" ng-model="non_statutory_admin" ng-options="role.name for role in roles">
-				<option value="">-- choose role --</option>
-			</select>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<label class="control-label col-sm-3">Super Admin</label>
-		<div class="input-group col-sm-6">
-			<select class="form-control" ng-model="super_admin" ng-options="role.name for role in roles">
-				<option value="">-- choose role --</option>
-			</select>
-		</div>
-	</div>
+	<h3>Event Lifecycle Management</h3>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Statuses</th>
+				<th>Transitions</th>
+				<th>Default status</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="eventType in eventTypes">
+				<td>
+					<input ng-model="eventType.name" />
+				</td>
+				<td>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="status in eventType.defaultLifecycle.status">
+								<td>
+									<input ng-model="status.name" />
+								</td>
+								<td>
+									<div><strong>Users: </strong>{{ status.visibility.users.join(', ') }}</div>
+									<div><strong>Roles: </strong>{{ status.visibility.roles.join(', ') }}</div>
+									<div><strong>Bodies: </strong>{{ status.visibility.bodies.join(', ') }}</div>
+									<div><strong>Special: </strong>{{ status.visibility.special.join(', ') }}</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+				<td>
+					<table class="table">
+						<thead>
+							<tr>
+								<th>From</th>
+								<th>To</th>
+								<th>Who can do this</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="transition in eventType.defaultLifecycle.transitions">
+								<td>
+									<select ng-model="transition.from" ng-options="status.name as status.name for status in eventType.defaultLifecycle.status" />
+								</td>
+								<td>
+									<select ng-model="transition.to" ng-options="status.name as status.name for status in eventType.defaultLifecycle.status" />
+								</td>
+								<td>
+									<div><strong>Users: </strong>{{ transition.allowedBy.users.join(', ') }}</div>
+									<div><strong>Roles: </strong>{{ transition.allowedBy.roles.join(', ') }}</div>
+									<div><strong>Bodies: </strong>{{ transition.allowedBy.bodies.join(', ') }}</div>
+									<div><strong>Special: </strong>{{ transition.allowedBy.special.join(', ') }}</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+				<td>
+					<select ng-model="eventType.defaultLifecycle.initialStatus" ng-options="status.name as status.name for status in eventType.defaultLifecycle.status" />
+				</td>
+				<td>
+					<button type="button" class="btn btn-primary col-sm-6" ng-click="updateLifecycle(eventType)">Save</button>
+				</td>
+			</tr>
+		</tbody>
+	</table>
 
 	<div class="form-group">
 		<span class="col-sm-3"></span>

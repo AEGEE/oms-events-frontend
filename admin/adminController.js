@@ -421,22 +421,11 @@
           name: item.cell[1],
         });
       });
+    }).catch(showError);
 
-      $http.get(`${apiUrl}roles`).success((setRoles) => {
-        if (setRoles.su_admin) {
-          $scope.su_admin = $scope.roles.find(item => item.id === setRoles.su_admin);
-        }
-        if (setRoles.statutory_admin) {
-          $scope.statutory_admin = $scope.roles.find(item => item.id === setRoles.statutory_admin);
-        }
-        if (setRoles.non_statutory_admin) {
-          $scope.non_statutory_admin = $scope.roles.find(
-            item => item.id === setRoles.non_statutory_admin);
-        }
-        if (setRoles.super_admin) {
-          $scope.super_admin = $scope.roles.find(item => item.id === setRoles.super_admin);
-        }
-      });
+    $http.get(`${apiUrl}lifecycle`).success((response) => {
+      console.log(response.data);
+      $scope.eventTypes = response.data;
     }).catch(showError);
 
     const randomDate = (start, end) =>
@@ -485,36 +474,22 @@
       }
     };
 
-    $scope.submitForm = () => {
-      const data = {
-        roles: {
-          su_admin: '',
-          statutory_admin: '',
-          non_statutory_admin: '',
-          super_admin: '',
-        },
+    $scope.updateLifecycle = (eventType) => {
+      // Create an object for sending to server...
+      // TODO: Validating new object
+      const newLifecycle = {
+        eventType: eventType.name,
+        status: JSON.parse(JSON.stringify(eventType.defaultLifecycle.status)),
+        transitions: JSON.parse(JSON.stringify(eventType.defaultLifecycle.transitions)),
+        initialStatus: eventType.defaultLifecycle.initialStatus,
       };
 
-      if ($scope.su_admin) {
-        data.roles.su_admin = $scope.su_admin.id;
-      }
-      if ($scope.statutory_admin) {
-        data.roles.statutory_admin = $scope.statutory_admin.id;
-      }
-      if ($scope.non_statutory_admin) {
-        data.roles.non_statutory_admin = $scope.non_statutory_admin.id;
-      }
-      if ($scope.super_admin) {
-        data.roles.super_admin = $scope.super_admin.id;
-      }
-
-
-      $http.put(`${apiUrl}roles`, data).success(() => {
+      $http.post(`${apiUrl}lifecycle`, newLifecycle).success(() => {
         $.gritter.add({
-          title: 'Roles saved',
-          text: 'Your changes to the roles were successfully saved',
+          title: 'Lifecycle updated.',
+          text: `The default lifecycle for the event type '${eventType.name}' is successfully updated.`,
           sticky: false,
-          time: 8000,
+          time: '3600',
           class_name: 'my-sticky-class',
         });
       }).catch(showError);
