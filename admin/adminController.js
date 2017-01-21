@@ -347,28 +347,29 @@
   function ApproveEventsController($scope, $http) {
     $http.get(`${apiUrl}mine/approvable`).success((response) => {
       $scope.events = response;
+
+      $scope.events.forEach((event) => {
+        event.status = event.lifecycle.status.find(s => s._id === event.status);
+
+        event.futureStatuses = event.lifecycle.status.filter((status) => {
+          return event.lifecycle.transitions.some((transition) => {
+            return transition.from === event.status._id && transition.to === status._id;
+          });
+        });
+      });
     }).catch(showError);
 
-    $scope.changeState = (event, newstate) => {
-      $http.put(`${apiUrl}single/${event.id}/status`, { status: newstate }).success(() => {
-        $scope.events.splice($scope.events.find(item => item.id === event.id));
-        if (newstate === 'approved') {
-          $.gritter.add({
-            title: 'Event approved',
-            text: `${event.name} has been approved and is now visible on event listing`,
-            sticky: false,
-            time: 8000,
-            class_name: 'my-sticky-class',
-          });
-        } else {
-          $.gritter.add({
-            title: 'Event reset',
-            text: `${event.name} has been sent to draft again, the organizers will edit it`,
-            sticky: false,
-            time: 8000,
-            class_name: 'my-sticky-class',
-          });
-        }
+    $scope.changeState = (event, newStatus) => {
+      $http.put(`${apiUrl}single/${event.id}/status`, { status: newStatus }).success(() => {
+        $.gritter.add({
+          title: 'Event status updated.',
+          text: `${event.name}'s status has been changed from '${event.status.name}'' to '${event.futureStatus.name}'`,
+          sticky: false,
+          time: 8000,
+          class_name: 'my-sticky-class',
+        });
+
+        $scope.events.splice($scope.events.find(item => item.id === event.id), 1);
       }).catch(showError);
     };
   }
@@ -484,6 +485,7 @@
         initialStatus: eventType.defaultLifecycle.initialStatus,
       };
 
+      // ... aaaand sending it.
       $http.post(`${apiUrl}lifecycle`, newLifecycle).success(() => {
         $.gritter.add({
           title: 'Lifecycle updated.',
