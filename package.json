@@ -1,0 +1,29 @@
+{
+  "name": "oms-events-frontend",
+  "version": "0.1.0",
+  "description": "Frontend part of the OMS events module.",
+  "main": "index.js",
+  "scripts": {
+    "lint": "node_modules/.bin/eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AEGEE/oms-events-frontend.git"
+  },
+  "keywords": [
+    "events",
+    "oms",
+    "angular"
+  ],
+  "author": "Nico Westerbeck",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AEGEE/oms-events-frontend/issues"
+  },
+  "homepage": "https://github.com/AEGEE/oms-events-frontend#readme",
+  "devDependencies": {
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0"
+  }
+}
