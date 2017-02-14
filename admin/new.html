@@ -142,17 +142,13 @@
   <div class="form-group" ng-class="{ 'has-error': (eventForm.type.$invalid && eventForm.type.$dirty) || eventForm.type.$error.message }">
     <label class="control-label col-sm-4" for="type">Type<span class="text-danger">*</span></label>
     <div class="input-group col-sm-6">
-      <select class="form-control"
-          name="type"
-          ng-model="event.type"
-          required
-          ng-disabled="!permissions.edit_details">
-        <option value="non-statutory">Non-Statutory</option>
-        <option value="statutory">Statutory</option>
-        <option value="su">Summer University</option>
-        <option value="local">Local</option>
+      <select
+        ng-model="event.type"
+        name="type"
+        required
+        ng-disabled="!permissions.edit_details"
+        ng-options="name for name in eventTypeNames">
       </select>
-
       <p ng-show="eventForm.type.$error.message">{{ eventForm.type.$error.message }}</p>
     </div>
   </div>

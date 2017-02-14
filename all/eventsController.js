@@ -86,29 +86,14 @@
   }
 
   const initTimeline = ($scope) => {
-    $scope.typequery = {
-      statutory: true,
-      non_statutory: true,
-      su: true,
-      local: true,
-    };
+    $scope.typequery = {};
     $scope.currentTime = Date.now(); // get the current time for the timeline
 
     // Search callback to enable searching in name and description only
     $scope.search = (row) => {
-      const statusTypes = [];
-      if ($scope.typequery.statutory) {
-        statusTypes.push('statutory');
-      }
-      if ($scope.typequery.non_statutory) {
-        statusTypes.push('non-statutory');
-      }
-      if ($scope.typequery.su) {
-        statusTypes.push('su');
-      }
-      if ($scope.typequery.local) {
-        statusTypes.push('local');
-      }
+      const statusTypes = Object
+        .keys($scope.typequery)
+        .filter(type => $scope.typequery[type]);
 
       const query = angular.lowercase($scope.query);
 
@@ -120,6 +105,11 @@
 
   function ListingController($scope, $http) {
     initTimeline($scope);
+
+    $http.get(`${apiUrl}lifecycle/names`).success((response) => {
+      $scope.eventTypeNames = response.data;
+      $scope.eventTypeNames.forEach((name) => { $scope.typequery[name] = true; });
+    }).catch(showError);
 
     // Fetch events from backend
     // $('#loadingOverlay').show();

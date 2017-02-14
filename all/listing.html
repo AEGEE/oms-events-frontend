@@ -59,20 +59,9 @@
 
           <div class="row">
             <div class="col-sm-9">
-              <label class="checkbox-inline"><input type="checkbox" ng-model="typequery.statutory">
-                Statutory
-              </label>
-
-              <label class="checkbox-inline"><input type="checkbox" ng-model="typequery.non_statutory">
-                Non-Statutory
-              </label>
-
-              <label class="checkbox-inline"><input type="checkbox" ng-model="typequery.su">
-                SU
-              </label>
-
-              <label class="checkbox-inline"><input type="checkbox" ng-model="typequery.local">
-                Local
+              <label class="checkbox-inline" ng-repeat="name in eventTypeNames">
+                <input type="checkbox" ng-model="typequery[name]">
+                {{ name }}
               </label>
             </div>
 

@@ -98,6 +98,10 @@
   }
 
   function NewController($scope, $http, $stateParams, $state, $filter, $parse, FileUploader) {
+    $http.get(`${apiUrl}lifecycle/names`).success((response) => {
+      $scope.eventTypeNames = response.data;
+    }).catch(showError);
+
     // Per default make event editable
     $scope.permissions = {
       edit_details: true,
