@@ -101,7 +101,6 @@
         class="form-control width-full"
         name="url"
         ng-model="event.url"
-        required
         ng-disabled="!permissions.edit_details"
          />
       <p ng-show="eventForm.url.$error.message">{{ eventForm.url.$error.message }}</p>
