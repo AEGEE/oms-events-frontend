@@ -556,56 +556,33 @@
       }).catch(showError);
     };
 
-    $scope.fetchUserData = (query = '') => {
-      $http.get(`/api/getUsers?limit=20&name=${query}`).success((res) => {
-        var users = [];
-
-        res.rows.forEach((item) => {
-          users.push({
-            foreign_id: item.cell[0],
-            name: item.cell[1],
+    // General callback for calling the API for data
+    // Returns a promise for angucomplete-alt that is racing against the timeout, returning the data from the called url
+    var fetchData = (url, query, timeout) => {
+      return Promise.race(timeout, new Promise(function(fulfill, reject) {
+        $http.get(url + `?limit=20&name=${query}`).success((res) => {
+          var data = [];
+          res.rows.forEach((item) => {
+            data.push({
+              foreign_id: item.cell[0],
+              name: item.cell[1]
+            });
           });
-        });
+          fulfill(data);
+        }).catch((err) => reject(err));
+      }));
+    };
 
-        $scope.users = users;
-        console.log($scope.users); // TODO remove
-      }).catch(showError);
+    $scope.fetchUserData = (query, timeout) => {
+      return fetchData(`/api/getUsers`, query, timeout);
     };
 
     $scope.fetchBodyData = (query = '') => {
-      $http.get(`/api/getAntennae?limit=20&name=${query}`).success((res) => {
-        var bodies = [];
-
-        res.rows.forEach((item) => {
-          bodies.push({
-            foreign_id: item.cell[0],
-            name: item.cell[1],
-            city: item.cell[5],
-            country: item.cell[6]
-          });
-        });
-
-        $scope.bodies = bodies;
-        console.log($scope.bodies); // TODO remove
-
-      }).catch(showError);
+      return fetchData(`/api/getAntennae`, query, timeout);
     };
 
     $scope.fetchRoleData = (query = '') => {
-      $http.get(`/api/getRoles?limit=20&name=${query}`).success((res) => {
-        var roles = [];
-
-        res.rows.forEach((item) => {
-          roles.push({
-            foreign_id: item.cell[0],
-            name: item.cell[1]
-          });
-        });
-
-        $scope.roles = roles;
-        console.log($scope.roles); // TODO remove
-
-      }).catch(showError);
+      return fetchData(`/api/getRoles`, query, timeout);
     };
   }
 
