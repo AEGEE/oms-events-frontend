@@ -169,6 +169,8 @@
         });
         $state.go('app.events.single', { id: response.event.id });
       }).catch((err) => {
+        showError(err);
+
         for (let attr in err.data.errors) {
           const serverMessage = $parse(`eventForm.${attr}.$error.message`);
           $scope.eventForm.$setValidity(attr, false, $scope.eventForm);
@@ -243,7 +245,7 @@
 
       // File change possible
       $scope.uploadFile = new FileUploader();
-      $scope.uploadFile.url = `${resourceURL}/upload`
+      $scope.uploadFile.url = `${resourceURL}/upload`;
       $scope.uploadFile.alias = 'head_image';
       $scope.uploadFile.autoUpload = true;
       $scope.uploadFile.headers = {
@@ -347,28 +349,29 @@
   function ApproveEventsController($scope, $http) {
     $http.get(`${apiUrl}mine/approvable`).success((response) => {
       $scope.events = response;
+
+      $scope.events.forEach((event) => {
+        event.status = event.lifecycle.status.find(s => s._id === event.status);
+
+        event.futureStatuses = event.lifecycle.status.filter((status) => {
+          return event.lifecycle.transitions.some((transition) => {
+            return transition.from === event.status._id && transition.to === status._id;
+          });
+        });
+      });
     }).catch(showError);
 
-    $scope.changeState = (event, newstate) => {
-      $http.put(`${apiUrl}single/${event.id}/status`, { status: newstate }).success(() => {
-        $scope.events.splice($scope.events.find(item => item.id === event.id));
-        if (newstate === 'approved') {
-          $.gritter.add({
-            title: 'Event approved',
-            text: `${event.name} has been approved and is now visible on event listing`,
-            sticky: false,
-            time: 8000,
-            class_name: 'my-sticky-class',
-          });
-        } else {
-          $.gritter.add({
-            title: 'Event reset',
-            text: `${event.name} has been sent to draft again, the organizers will edit it`,
-            sticky: false,
-            time: 8000,
-            class_name: 'my-sticky-class',
-          });
-        }
+    $scope.changeState = (event, newStatus) => {
+      $http.put(`${apiUrl}single/${event.id}/status`, { status: newStatus }).success(() => {
+        $.gritter.add({
+          title: 'Event status updated.',
+          text: `${event.name}'s status has been changed from '${event.status.name}'' to '${event.futureStatus.name}'`,
+          sticky: false,
+          time: 8000,
+          class_name: 'my-sticky-class',
+        });
+
+        $scope.events.splice($scope.events.find(item => item.id === event.id), 1);
       }).catch(showError);
     };
   }
@@ -421,22 +424,10 @@
           name: item.cell[1],
         });
       });
+    }).catch(showError);
 
-      $http.get(`${apiUrl}roles`).success((setRoles) => {
-        if (setRoles.su_admin) {
-          $scope.su_admin = $scope.roles.find(item => item.id === setRoles.su_admin);
-        }
-        if (setRoles.statutory_admin) {
-          $scope.statutory_admin = $scope.roles.find(item => item.id === setRoles.statutory_admin);
-        }
-        if (setRoles.non_statutory_admin) {
-          $scope.non_statutory_admin = $scope.roles.find(
-            item => item.id === setRoles.non_statutory_admin);
-        }
-        if (setRoles.super_admin) {
-          $scope.super_admin = $scope.roles.find(item => item.id === setRoles.super_admin);
-        }
-      });
+    $http.get(`${apiUrl}lifecycle`).success((response) => {
+      $scope.eventTypes = response.data;
     }).catch(showError);
 
     const randomDate = (start, end) =>
@@ -460,17 +451,20 @@
         }
       };
 
+      const titles = ['Hackathon', 'Visit museum', 'Sightseeing', 'LGBTI Demonstration', 'Adventure time: return of the rabbits', 'Jamsession', `Develop Yourself ${Math.floor(Math.random() * 20)}`, 'The Mystery of Transylvanian (K)nights'];
+
+      const descriptions = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae cum dixisset paulumque institisset, Quid est? Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. Qua ex cognitione facilior facta est investigatio rerum occultissimarum.',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Utinam quidem dicerent alium alio beatiorem! Iam ruinas videres. Si stante, hoc natura videlicet vult, salvam esse se, quod concedimus; Iam id ipsum absurdum, maximum malum neglegi. Quorum sine causa fieri nihil putandum est. Non potes, nisi retexueris illa. Duo Reges: constructio interrete. Mihi enim satis est, ipsis non satis. Si enim ad populum me vocas, eum. Tibi hoc incredibile, quod beatissimum. Quod si ita se habeat, non possit beatam praestare vitam sapientia.',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. An potest, inquit ille, quicquam esse suavius quam nihil dolere? Qualis ista philosophia est, quae non interitum afferat pravitatis, sed sit contenta mediocritate vitiorum? Ergo id est convenienter naturae vivere, a natura discedere. Qua tu etiam inprudens utebare non numquam. Inde sermone vario sex illa a Dipylo stadia confecimus. ',
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tum Quintus: Est plane, Piso, ut dicis, inquit. Nonne igitur tibi videntur, inquit, mala? Mihi enim erit isdem istis fortasse iam utendum. Et ille ridens: Video, inquit, quid agas; Duo Reges: constructio interrete. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Quo plebiscito decreta a senatu est consuli quaestio Cn. Videamus animi partes, quarum est conspectus illustrior; Mihi enim satis est, ipsis non satis. Satis est ad hoc responsum. Nondum autem explanatum satis, erat, quid maxime natura vellet.'];
+
       for (let i = 0; i < total; i++) {
-        const titles = ['Hackathon', 'Visit museum', 'Sightseeing', 'LGBTI Demonstration', 'Adventure time: return of the rabbits', 'Jamsession', `Develop Yourself ${Math.floor(Math.random() * 20)}`, 'The Mystery of Transylvanian (K)nights'];
         const title = titles[Math.floor(Math.random() * titles.length)];
         const start = randomDate(
           new Date(), new Date(new Date().setFullYear(new Date().getFullYear() + 3)));
         const end = new Date(start.getTime() + (Math.random() * 14 * 24 * 60 * 60 * 1000));
-        const descriptions = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quae cum dixisset paulumque institisset, Quid est? Omnes enim iucundum motum, quo sensus hilaretur. Duo Reges: constructio interrete. Qua ex cognitione facilior facta est investigatio rerum occultissimarum.',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Utinam quidem dicerent alium alio beatiorem! Iam ruinas videres. Si stante, hoc natura videlicet vult, salvam esse se, quod concedimus; Iam id ipsum absurdum, maximum malum neglegi. Quorum sine causa fieri nihil putandum est. Non potes, nisi retexueris illa. Duo Reges: constructio interrete. Mihi enim satis est, ipsis non satis. Si enim ad populum me vocas, eum. Tibi hoc incredibile, quod beatissimum. Quod si ita se habeat, non possit beatam praestare vitam sapientia.',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. An potest, inquit ille, quicquam esse suavius quam nihil dolere? Qualis ista philosophia est, quae non interitum afferat pravitatis, sed sit contenta mediocritate vitiorum? Ergo id est convenienter naturae vivere, a natura discedere. Qua tu etiam inprudens utebare non numquam. Inde sermone vario sex illa a Dipylo stadia confecimus. ',
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tum Quintus: Est plane, Piso, ut dicis, inquit. Nonne igitur tibi videntur, inquit, mala? Mihi enim erit isdem istis fortasse iam utendum. Et ille ridens: Video, inquit, quid agas; Duo Reges: constructio interrete. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Quo plebiscito decreta a senatu est consuli quaestio Cn. Videamus animi partes, quarum est conspectus illustrior; Mihi enim satis est, ipsis non satis. Satis est ad hoc responsum. Nondum autem explanatum satis, erat, quid maxime natura vellet.'];
         const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+
         const event = {
           name: title,
           starts: start,
@@ -481,42 +475,80 @@
         $http.post(apiUrl, event).success(eventAddHandler)
         .catch((err) => {
           console.log(err);
+          showError(err);
         });
       }
     };
 
-    $scope.submitForm = () => {
-      const data = {
-        roles: {
-          su_admin: '',
-          statutory_admin: '',
-          non_statutory_admin: '',
-          super_admin: '',
+    $scope.addNewStatus = (eventType) => {
+      eventType.defaultLifecycle.status.push({
+        name: 'Default name',
+        visibility: {
+          users: [],
+          roles: [],
+          bodies: [],
+          special: ['Public'],
         },
+      });
+    };
+
+    $scope.addNewTransition = (eventType) => {
+      eventType.defaultLifecycle.transitions.push({
+        from: '',
+        to: '',
+        allowedFor: {
+          users: [],
+          roles: [],
+          bodies: [],
+          special: [],
+        },
+      });
+    };
+
+    $scope.addNewEventType = () => {
+      $scope.eventTypes.push({
+        name: 'Default event type',
+        defaultLifecycle: {
+          status: [],
+          transitions: [],
+          initialStatus: null,
+        },
+      });
+    };
+
+    $scope.updateLifecycle = (eventType) => {
+      // Create an object for sending to server...
+      // TODO: Validating new object
+      const newLifecycle = {
+        eventType: eventType.name,
+        status: JSON.parse(JSON.stringify(eventType.defaultLifecycle.status)),
+        transitions: JSON.parse(JSON.stringify(eventType.defaultLifecycle.transitions)),
+        initialStatus: eventType.defaultLifecycle.initialStatus,
       };
 
-      if ($scope.su_admin) {
-        data.roles.su_admin = $scope.su_admin.id;
-      }
-      if ($scope.statutory_admin) {
-        data.roles.statutory_admin = $scope.statutory_admin.id;
-      }
-      if ($scope.non_statutory_admin) {
-        data.roles.non_statutory_admin = $scope.non_statutory_admin.id;
-      }
-      if ($scope.super_admin) {
-        data.roles.super_admin = $scope.super_admin.id;
-      }
-
-
-      $http.put(`${apiUrl}roles`, data).success(() => {
+      // ... aaaand sending it.
+      $http.post(`${apiUrl}lifecycle`, newLifecycle).success(() => {
         $.gritter.add({
-          title: 'Roles saved',
-          text: 'Your changes to the roles were successfully saved',
+          title: 'Lifecycle updated.',
+          text: `The default lifecycle for the event type '${eventType.name}' is successfully updated.`,
           sticky: false,
-          time: 8000,
+          time: '3600',
           class_name: 'my-sticky-class',
         });
+      }).catch(showError);
+    };
+
+    $scope.deleteLifecycle = (eventType) => {
+      $http.delete(`${apiUrl}lifecycle/${eventType.name}`).success(() => {
+        $.gritter.add({
+          title: 'Lifecycle updated.',
+          text: `The lifecycle for the event type '${eventType.name}' was successfully deleted.`,
+          sticky: false,
+          time: '3600',
+          class_name: 'my-sticky-class',
+        });
+
+        $scope.eventTypes.splice($scope.eventTypes.indexOf(eventType), 1);
       }).catch(showError);
     };
   }
