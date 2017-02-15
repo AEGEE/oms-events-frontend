@@ -420,6 +420,10 @@
       console.log(res);
     }).catch(showError);
 
+    $http.get(`${apiUrl}lifecycle/pseudo`).success((res) => {
+      $scope.pseudoRoles = res.data;
+    }).catch(showError);
+
     $http.get('/api/getRoles').success((allRoles) => {
       $scope.roles = [];
       allRoles.rows.forEach((item) => {
