@@ -1,8 +1,8 @@
 <h2 class="page-header" ng-show="!newevent">Edit event</h2>
-<h2 class="page-header" ng-show="newevent">New event 	
-  <button 
-    type="button" 
-    class="btn btn-info btn-circle btn-sm" 
+<h2 class="page-header" ng-show="newevent">New event
+  <button
+    type="button"
+    class="btn btn-info btn-circle btn-sm"
     ng-click="info_eventcreation = !info_eventcreation">
     <i class="fa fa-question"></i></button>
 </h2>
@@ -139,7 +139,7 @@
   </div>
 
 
-  <div class="form-group" ng-class="{ 'has-error': (eventForm.type.$invalid && eventForm.type.$dirty) || eventForm.type.$error.message }">
+  <div class="form-group" ng-class="{ 'has-error': (eventForm.type.$invalid && eventForm.type.$dirty) || eventForm.type.$error.message }" ng-show="newevent">
     <label class="control-label col-sm-4" for="type">Type<span class="text-danger">*</span></label>
     <div class="input-group col-sm-6">
       <select
@@ -152,6 +152,10 @@
       <p ng-show="eventForm.type.$error.message">{{ eventForm.type.$error.message }}</p>
     </div>
   </div>
+
+  <p class="note note-info" ng-show="newevent">
+  Choose wisely, you won't be able to change the event type afterwards.
+  </p>
 
   <!-- Maybe change this to a button which is to click to request approval and only show it to admins via ng-if -->
   <div class="form-group" ng-class="{ 'has-error': (eventForm.status.$invalid && eventForm.status.$dirty) || eventForm.status.$error.message }" ng-show="!newevent">
