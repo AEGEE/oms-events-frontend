@@ -117,7 +117,7 @@
                         <a href="#" ng-click="status.visibility.special.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpSpecial" />
+                    <select ng-model="tmpSpecial" ng-options="r.name as r.name for r in pseudoRoles"></select>
                     <button ng-click="status.visibility.special.push(tmpSpecial)">Add</button>
                   </td>
                 </tr>
@@ -200,7 +200,7 @@
                         <a href="#" ng-click="transition.allowedFor.special.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpSpecial" />
+                    <select ng-model="tmpSpecial" ng-options="r.name as r.name for r in pseudoRoles"></select>
                     <button ng-click="transition.allowedFor.special.push(tmpSpecial)">Add</button>
                   </td>
                 </tr>
