@@ -147,6 +147,7 @@
                         <a href="#" ng-click="status.visibility.special.splice($index, 1)">x</a>
                       </li>
                     </ul>
+
                     <angucomplete-alt id="special{{ statusIndex }}"
                       placeholder="Search special roles"
                       pause="50"
@@ -155,7 +156,7 @@
                       search-fields="name"
                       title-field="name"
                       description-field=""
-                      minlength="1"
+                      minlength="0"
                       input-class="form-control form-control-small">
                     </angucomplete-alt>                   
                     <button ng-click="status.visibility.special.push(tmpSpecial.originalObject.name)">Add</button>
@@ -275,7 +276,7 @@
                       search-fields="name"
                       title-field="name"
                       description-field=""
-                      minlength="1"
+                      minlength="0"
                       input-class="form-control form-control-small">
                     </angucomplete-alt>                   
                     <button ng-click="transition.allowedFor.special.push(tmpSpecial.originalObject.name)">Add</button>

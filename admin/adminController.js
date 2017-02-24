@@ -434,6 +434,10 @@
       $scope.eventTypes = response.data;
     }).catch(showError);
 
+    $http.get(apiUrl + 'lifecycle/pseudo').success((res) => {
+      $scope.specialRolesData = res.data;
+    }).catch(showError);
+
     const randomDate = (start, end) =>
       new Date(start.getTime() + (Math.random() * (end.getTime() - start.getTime())));
 
@@ -598,12 +602,7 @@
 
     $scope.fetchRoleData = (query, timeout) => {
       return fetchData(`/api/getRoles`, query, timeout);
-    };
-
-    $scope.specialRolesData = [];
-    $http.get(apiUrl + 'lifecycle/pseudo').success((res) => {
-      $scope.specialRolesData = res.data;
-    }).catch(showError);
+    };    
   }
 
   angular
