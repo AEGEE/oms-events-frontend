@@ -1,3 +1,6 @@
+<!-- TODO should be included in core -->
+<link rel="stylesheet" href="https://ghiden.github.io/angucomplete-alt/css/angucomplete-alt.css">
+
 <div class="row">
   <div class="col-lg-6">
     <h3>Service status</h3>
@@ -78,8 +81,17 @@
                         <a href="#" ng-click="status.visibility.users.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpUser" />
-                    <button ng-click="status.visibility.users.push(tmpUser)">Add</button>
+                    <angucomplete-alt id="members{{ statusIndex }}"
+                      placeholder="Search members"
+                      pause="50"
+                      selected-object="tmpUser"
+                      remote-api-handler="fetchUserData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="status.visibility.users.push(tmpUser.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -91,8 +103,17 @@
                         <a href="#" ng-click="status.visibility.roles.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpRole" />
-                    <button ng-click="status.visibility.roles.push(tmpRole)">Add</button>
+                    <angucomplete-alt id="roles{{ statusIndex }}"
+                      placeholder="Search Roles"
+                      pause="50"
+                      selected-object="tmpRole"
+                      remote-api-handler="fetchRoleData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="status.visibility.roles.push(tmpRole.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -104,8 +125,17 @@
                         <a href="#" ng-click="status.visibility.bodies.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpBody" />
-                    <button ng-click="status.visibility.bodies.push(tmpBody)">Add</button>
+                    <angucomplete-alt id="bodies{{ statusIndex }}"
+                      placeholder="Search bodies"
+                      pause="50"
+                      selected-object="tmpBody"
+                      remote-api-handler="fetchBodyData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="status.visibility.bodies.push(tmpBody.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -117,8 +147,18 @@
                         <a href="#" ng-click="status.visibility.special.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpSpecial" />
-                    <button ng-click="status.visibility.special.push(tmpSpecial)">Add</button>
+                    <angucomplete-alt id="special{{ statusIndex }}"
+                      placeholder="Search special roles"
+                      pause="50"
+                      selected-object="tmpSpecial"
+                      local-data="specialRolesData"
+                      search-fields="name"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>                   
+                    <button ng-click="status.visibility.special.push(tmpSpecial.originalObject.name)">Add</button>
                   </td>
                 </tr>
               </tbody>
@@ -161,8 +201,17 @@
                         <a href="#" ng-click="transition.allowedFor.users.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpUser" />
-                    <button ng-click="transition.allowedFor.users.push(tmpUser)">Add</button>
+                    <angucomplete-alt id="membersT{{ transitionIndex }}"
+                      placeholder="Search members"
+                      pause="50"
+                      selected-object="tmpUser"
+                      remote-api-handler="fetchUserData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="transition.allowedFor.users.push(tmpUser.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -174,8 +223,17 @@
                         <a href="#" ng-click="transition.allowedFor.roles.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpRole" />
-                    <button ng-click="transition.allowedFor.roles.push(tmpRole)">Add</button>
+                    <angucomplete-alt id="rolesT{{ transitionIndex }}"
+                      placeholder="Search Roles"
+                      pause="50"
+                      selected-object="tmpRole"
+                      remote-api-handler="fetchRoleData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="transition.allowedFor.roles.push(tmpRole.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -187,8 +245,17 @@
                         <a href="#" ng-click="transition.allowedFor.bodies.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpBody" />
-                    <button ng-click="transition.allowedFor.bodies.push(tmpBody)">Add</button>
+                    <angucomplete-alt id="bodiesT{{ transitionIndex }}"
+                      placeholder="Search bodies"
+                      pause="50"
+                      selected-object="tmpBody"
+                      remote-api-handler="fetchBodyData"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>
+                    <button ng-click="transition.allowedFor.bodies.push(tmpBody.originalObject.name)">Add</button>
                   </td>
                 </tr>
                 <tr>
@@ -200,8 +267,18 @@
                         <a href="#" ng-click="transition.allowedFor.special.splice($index, 1)">x</a>
                       </li>
                     </ul>
-                    <input ng-model="tmpSpecial" />
-                    <button ng-click="transition.allowedFor.special.push(tmpSpecial)">Add</button>
+                    <angucomplete-alt id="specialT{{ transitionIndex }}"
+                      placeholder="Search special roles"
+                      pause="50"
+                      selected-object="tmpSpecial"
+                      local-data="specialRolesData"
+                      search-fields="name"
+                      title-field="name"
+                      description-field=""
+                      minlength="1"
+                      input-class="form-control form-control-small">
+                    </angucomplete-alt>                   
+                    <button ng-click="transition.allowedFor.special.push(tmpSpecial.originalObject.name)">Add</button>
                   </td>
                 </tr>
               </tbody>

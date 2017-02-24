@@ -559,31 +559,51 @@
     // General callback for calling the API for data
     // Returns a promise for angucomplete-alt that is racing against the timeout, returning the data from the called url
     var fetchData = (url, query, timeout) => {
-      return Promise.race(timeout, new Promise(function(fulfill, reject) {
-        $http.get(url + `?limit=20&name=${query}`).success((res) => {
+
+      // Copied from the angular tutorial on how to add transformations
+      function appendTransform(defaults, transform) {
+        // We can't guarantee that the default transformation is an array
+        defaults = angular.isArray(defaults) ? defaults : [defaults];
+
+        // Append the new transformation to the defaults
+        return defaults.concat(transform);
+      }
+
+      return $http({
+        url: url + `?limit=20&name=${query}`,
+        method: 'GET',
+        transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
           var data = [];
+          if(res === null)
+            return data;
           res.rows.forEach((item) => {
             data.push({
               foreign_id: item.cell[0],
               name: item.cell[1]
             });
           });
-          fulfill(data);
-        }).catch((err) => reject(err));
-      }));
+          return data;
+        }),
+        timeout: timeout
+      });
     };
 
     $scope.fetchUserData = (query, timeout) => {
       return fetchData(`/api/getUsers`, query, timeout);
     };
 
-    $scope.fetchBodyData = (query = '') => {
+    $scope.fetchBodyData = (query, timeout) => {
       return fetchData(`/api/getAntennae`, query, timeout);
     };
 
-    $scope.fetchRoleData = (query = '') => {
+    $scope.fetchRoleData = (query, timeout) => {
       return fetchData(`/api/getRoles`, query, timeout);
     };
+
+    $scope.specialRolesData = [];
+    $http.get(apiUrl + 'lifecycle/pseudo').success((res) => {
+      $scope.specialRolesData = res.data;
+    }).catch(showError);
   }
 
   angular
