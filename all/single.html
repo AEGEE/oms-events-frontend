@@ -66,12 +66,7 @@
 
             <tr>
               <td class="field">Type</td>
-              <td ng-switch="event.type">
-                <span ng-switch-when="su">Summer University</span>
-                <span ng-switch-when="statutory">Statutory Event</span>
-                <span ng-switch-when="non-statutory">Non-Statutory Event</span>
-                <span ng-switch-when="local">Local Event</span>
-              </td>
+              <td>{{ event.type }}</td>
             </tr>
             <tr>
               <td class="field">Status</td>

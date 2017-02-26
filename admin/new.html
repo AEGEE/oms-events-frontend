@@ -207,7 +207,7 @@
     </div>
 
     <p class="note note-info" ng-show="info_status">
-      The status of the event determines the visibility of the event. Only approved events will be listed in the main events listing, but you can only edit draft events. If you want to open the application, your event needs to be approved. WARNING: Only admins can undo a given approval, as soon as the event was approved you will only be able to edit the application status and deadline, so make sure you have no typos anywhere!
+      Each event runs through several statuses in its lifecycle, depending on the configuration of the service. If you can not edit the status that means that you are not authorized to perform the next transition, it should be done by someone else.
       <span ng-show="eventForm.$dirty"><br>
       Please save your edits before you request approval
       </span>
