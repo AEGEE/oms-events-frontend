@@ -85,22 +85,30 @@
       });
   }
 
-  const initTimeline = ($scope) => {
+  const initTimeline = ($scope, filterTypes = true) => {
     $scope.typequery = {};
     $scope.currentTime = Date.now(); // get the current time for the timeline
 
     // Search callback to enable searching in name and description only
-    $scope.search = (row) => {
+    var searchQuery = (row) => {
+      const query = angular.lowercase($scope.query);
+
+      return (angular.lowercase(row.name).indexOf(query || '') !== -1 ||
+          angular.lowercase(row.description).indexOf(query || '') !== -1);
+    };
+
+    var searchTypes = (row) => {
       const statusTypes = Object
         .keys($scope.typequery)
         .filter(type => $scope.typequery[type]);
 
-      const query = angular.lowercase($scope.query);
-
-      return statusTypes.find(item => item === row.type) &&
-          (angular.lowercase(row.name).indexOf(query || '') !== -1 ||
-          angular.lowercase(row.description).indexOf(query || '') !== -1);
+      return statusTypes.find(item => item == row.type);
     };
+
+    if(filterTypes)
+      $scope.search = (row) => searchTypes(row) && searchQuery(row);
+    else
+      $scope.search = (row) => searchQuery(row);
   };
 
   function ListingController($scope, $http) {
@@ -120,7 +128,7 @@
   }
 
   function MineController($scope, $http) {
-    initTimeline($scope);
+    initTimeline($scope, false);
 
     $scope.mine = true;
     $scope.events = [];
