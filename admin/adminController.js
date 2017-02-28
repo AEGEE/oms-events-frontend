@@ -190,18 +190,6 @@
 
       // Add callbacks to delete the event
       const resourceURL = `${apiUrl}/single/${$stateParams.id}`;
-      $scope.deleteEvent = () => {
-        $http.delete(resourceURL).success(() => {
-          $.gritter.add({
-            title: 'Event deleted',
-            text: 'The event was deleted. If you wish to undo that, contact an admin.',
-            sticky: false,
-            time: 8000,
-            class_name: 'my-sticky-class',
-          });
-          $state.go('app.events');
-        }).catch(showError);
-      };
 
       // Add callbacks to request approval
       $scope.setApproval = (newStatus) => {
