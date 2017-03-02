@@ -150,7 +150,6 @@
     // Fetch event from backend
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
       $scope.event = res;
-      console.log(res);
     }).catch(showError);
 
     // TODO integrate this into the /single requers

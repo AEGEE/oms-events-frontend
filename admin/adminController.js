@@ -102,6 +102,10 @@
       $scope.eventTypeNames = response.data;
     }).catch(showError);
 
+    $http.get(`${apiUrl}eventroles`).success((response) => {
+      $scope.eventRolesData = response.data;
+    }).catch(showError);
+
     // Per default make event editable
     $scope.permissions = {
       edit_details: true,
@@ -129,36 +133,54 @@
       }
     };
 
-    let ticketCount = 0;
-    $scope.fetchNames = (query) => {
-      ticketCount++;
-      const myticket = ticketCount;
-      $http.get(`/api/getUsers?limit=10&name=${query}`).success((res) => {
-        // Do ticket synchronization if one request passes the other one
-        // This way we will only display the result of the last search
-        if (ticketCount === myticket) {
-          $scope.neworganizer.proposals = [];
-          res.rows.forEach((item) => {
-            $scope.neworganizer.proposals.push({
-              foreign_id: item.cell[0],
-              name: item.cell[1],
-              antenna_name: item.cell[5],
-            });
-          });
-          console.log($scope.neworganizer.proposals);
-        }
-      }).catch(showError);
-    };
-
     $scope.addOrganizer = (organizer) => {
-      $scope.event.organizers.push(organizer);
-      $scope.neworganizer.query = '';
+      $scope.event.organizers.push(organizer.originalObject);
+      $scope.$broadcast('angucomplete-alt:clearInput', 'addOrganizer');
     };
 
     $scope.removeOrganizer = (index) => {
       if ($scope.event.organizers && $scope.event.organizers.length > index) {
         $scope.event.organizers.splice(index, 1);
       }
+    };
+
+    $scope.addRole = (index, orgid, role) => {
+      if(role)
+        $scope.event.organizers[index].roles.push(role.originalObject);
+      $scope.$broadcast('angucomplete-alt:clearInput', 'role' + index + 'org' + orgid);
+    };
+
+    // General callback for calling the API for data
+    // Returns a promise for angucomplete-alt that is racing against the timeout, returning the data from the called url
+    $scope.fetchUserData = (query, timeout) => {
+
+      // Copied from the angular tutorial on how to add transformations
+      function appendTransform(defaults, transform) {
+        // We can't guarantee that the default transformation is an array
+        defaults = angular.isArray(defaults) ? defaults : [defaults];
+
+        // Append the new transformation to the defaults
+        return defaults.concat(transform);
+      }
+
+      return $http({
+        url: `/api/getUsers?limit=20&name=${query}`,
+        method: 'GET',
+        transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
+          var data = [];
+          if(res === null)
+            return data;
+          res.rows.forEach((item) => {
+            data.push({
+              foreign_id: item.cell[0],
+              name: item.cell[1],
+              antenna_name: item.cell[5]
+            });
+          });
+          return data;
+        }),
+        timeout: timeout
+      });
     };
 
     // If no route params are given, the user wants to create a new event -> Post

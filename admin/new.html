@@ -1,3 +1,6 @@
+<!-- TODO should be included in core -->
+<link rel="stylesheet" href="https://ghiden.github.io/angucomplete-alt/css/angucomplete-alt.css">
+
 <h2 class="page-header" ng-show="!newevent">Edit event</h2>
 <h2 class="page-header" ng-show="newevent">New event
   <button
@@ -331,7 +334,7 @@
             class="form-control"
             readonly
             style="background-color: #fff; opacity: 1;"
-            value="{{ field.name }}{{ field.first_name }} {{ field.last_name}}" />
+            value="{{ field.name }}{{ field.data.first_name }} {{ field.data.last_name}}" />
           <span class="input-group-addon">
             <button type="button" class="btn btn-primary btn-xs" ng-click="removeOrganizer($index)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
           </span>
@@ -344,36 +347,53 @@
             placeholder="comment"
             ng-disabled="!permissions.edit_organizers">
         </div>
+        <div ng-repeat="role in field.roles" class="input-group col-sm-12">
+          <input 
+            type="text"
+            class="form-control"
+            readonly
+            style="background-color: #fff; opacity: 1;"
+            value="{{ role.name }}" />
+          <span class="input-group-addon">
+            <button type="button" class="btn btn-primary btn-xs" ng-click="field.roles.splice($index, 1)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
+          </span>
+        </div>
+        <div class="input-group col-sm-12">
+          <angucomplete-alt id="role{{ $index }}org{{ field._id }}"
+            placeholder="Assign a new event role"
+            pause="50"
+            selected-object="field.tmpRole"
+            local-data="eventRolesData"
+            search-fields="name"
+            title-field="name"
+            description-field="description"
+            minlength="0"
+            disable-input="!permissions.edit_organizers"
+            input-class="form-control form-control-small">
+          </angucomplete-alt>
+
+          <span class="input-group-addon" ng-show="field.tmpRole">
+            <button type="button" class="btn btn-primary btn-xs" ng-click="addRole($index, field._id, field.tmpRole); field.tmpRole=null;" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
+          </span>
+        </div>
       </div>
 
       <div class="input-group form-group m-b-0" ng-show="permissions.edit_organizers">
-        <input
-          class="form-control"
-          placeholder="Type a name"
-          ng-model="neworganizer.query"
-          ng-change="fetchNames(neworganizer.query)"
-          >
-        <span class="input-group-addon">
-          <i class="fa fa-plus"></i>
+        <angucomplete-alt id="addOrganizer"
+          placeholder="Add another organizer"
+          pause="50"
+          selected-object="tmpUser"
+          remote-api-handler="fetchUserData"
+          title-field="name"
+          description-field="antenna_name"
+          minlength="1"
+          input-class="form-control form-control-small">
+        </angucomplete-alt>
+        <span class="input-group-addon" ng-show="tmpUser">
+          <button type="button" class="btn btn-primary btn-xs" ng-click="addOrganizer(tmpUser)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
         </span>
 
       </div>
-
-      <div class="input-group">
-      <div class="dropdownAutocomplete" style="z-index: 20; top:0;" ng-show="neworganizer.query">
-        <ul>
-          <li ng-repeat="user in neworganizer.proposals" ng-click="addOrganizer(user)">
-            <img class="comment-photo" ng-src="/api/getUserAvatar/{{ user.foreign_id }}">
-            <span class="comment-name">{{ user.name }}<br />
-              <small>{{ user.antenna_name }}</small>
-            </span>
-          </li>
-          <li class="row" ng-show="neworganizer.proposals.length == 0">
-            No results found
-          </li>
-        </ul>
-      </div>
-    </div>
     	<p ng-show="eventForm.organizers.$error.message">{{ eventForm.organizers.$error.message }}</p>
     </div>
   </div>
