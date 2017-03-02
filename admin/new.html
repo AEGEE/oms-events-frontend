@@ -369,7 +369,7 @@
             description-field="description"
             minlength="0"
             disable-input="!permissions.edit_organizers"
-            input-class="form-control form-control-small">
+            input-class="input-group col-sm-12">
           </angucomplete-alt>
 
           <span class="input-group-addon" ng-show="field.tmpRole">
@@ -378,7 +378,7 @@
         </div>
       </div>
 
-      <div class="input-group form-group m-b-0" ng-show="permissions.edit_organizers">
+      <div class="form-group" ng-show="permissions.edit_organizers">
         <angucomplete-alt id="addOrganizer"
           placeholder="Add another organizer"
           pause="50"
@@ -387,7 +387,7 @@
           title-field="name"
           description-field="antenna_name"
           minlength="1"
-          input-class="form-control form-control-small">
+          input-class="input-group col-sm-12">
         </angucomplete-alt>
         <span class="input-group-addon" ng-show="tmpUser">
           <button type="button" class="btn btn-primary btn-xs" ng-click="addOrganizer(tmpUser)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
