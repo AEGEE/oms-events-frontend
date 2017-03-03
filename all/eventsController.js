@@ -221,33 +221,30 @@
 
   function OrganizersController($scope, $http, $stateParams) {
     $scope.organizer_view = true;
-    $scope.order = 'user.main_organizer';
-    $scope.setSearch = (local) => {
-      if (local) {
-        $scope.query_antenna = local.foreign_id;
-      } else {
-        $scope.query_antenna = '';
-      }
-    };
 
     $scope.search = (row) => {
       const query = angular.lowercase($scope.query_name);
-      const name = angular.lowercase(`${row.first_name} ' + ${row.last_name}`);
-      return (!$scope.query_antenna || row.antenna_id === $scope.query_antenna)
+      const name = angular.lowercase(`${row.data.first_name} ' + ${row.data.last_name}`);
+      const rolematch = row.roles.some((role) => {
+        return $scope.roles.some((scoperole) => {
+          return scoperole.search && role._id === scoperole._id;
+        });
+      });
+      return rolematch
         && (!$scope.query_name || name.indexOf(query) !== -1);
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
       $scope.users = res.organizers;
-      $scope.locals = [];
-      res.organizers.forEach((user) => {
-        if (!$scope.locals.some(local => local.foreign_id === user.antenna_id)) {
-          $scope.locals.push({
-            foreign_id: user.antenna_id,
-            name: user.antenna_name,
-          });
-        }
+      console.log($scope.users);
+    }).catch(showError);
+
+    $http.get(`${apiUrl}eventroles`).success((res) => {
+      $scope.roles = res.data.map((item) => {
+        item.search = true;
+        return item;
       });
+      console.log($scope.roles);
     }).catch(showError);
   }
 
