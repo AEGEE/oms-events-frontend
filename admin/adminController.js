@@ -280,7 +280,8 @@
 
       // Get the current event status
       $http.get(resourceURL).success((response) => {
-        $scope.event = response;
+        $scope.event = response.data;
+        $scope.permissions = response.permissions.can;
       }).catch(showError);
 
       // Get organizers
@@ -289,11 +290,6 @@
       }).catch(function(err) {
         showError(err);
       }); */
-
-      // Get the rights this user has on this event
-      $http.get(`${resourceURL}/rights`).success((res) => {
-        $scope.permissions = res.can;
-      }).catch(showError);
     }
   }
 
