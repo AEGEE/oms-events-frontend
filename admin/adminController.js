@@ -134,6 +134,7 @@
     };
 
     $scope.addOrganizer = (organizer) => {
+      organizer.originalObject.roles = [];
       $scope.event.organizers.push(organizer.originalObject);
       $scope.$broadcast('angucomplete-alt:clearInput', 'addOrganizer');
     };
@@ -144,10 +145,23 @@
       }
     };
 
+    $scope.showOrganizersModal = () => {
+      $('#organizersModal').modal('show');
+    };
+    $scope.hideOrganizersModal = () => {
+      $('#organizersModal').modal('hide');
+    };
+
     $scope.addRole = (index, orgid, role) => {
-      if(role)
+      if(role) 
         $scope.event.organizers[index].roles.push(role.originalObject);
-      $scope.$broadcast('angucomplete-alt:clearInput', 'role' + index + 'org' + orgid);
+      
+      // newly created organizers don't yet have an id
+      //potential bug: after adding to organizers and assigning them roles accepting a role for one will clear the input for the other
+      if(!orgid)
+        orgid = '';
+
+      $scope.$broadcast('angucomplete-alt:clearInput', `role${index}org${orgid}`);
     };
 
     // General callback for calling the API for data
@@ -283,13 +297,6 @@
         $scope.event = response.data;
         $scope.permissions = response.permissions.can;
       }).catch(showError);
-
-      // Get organizers
-      /* $http.get(resourceURL + '/organizers').success(function (res) {
-        $scope.event.organizers = res;
-      }).catch(function(err) {
-        showError(err);
-      }); */
     }
   }
 

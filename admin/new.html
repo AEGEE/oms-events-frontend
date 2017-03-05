@@ -327,74 +327,8 @@
   <div class="form-group" ng-class="{ 'has-error': (eventForm.organizers.$invalid && eventForm.organizers.$dirty) || eventForm.organizers.$error.message }" ng-show="!newevent">
     <label class="control-label col-sm-4" for="organizers">Organizers</label>
     <div class="col-sm-6">
-      <div class="form-group" ng-repeat="field in event.organizers">
-        <div class="input-group">
-          <input
-            type="text"
-            class="form-control"
-            readonly
-            style="background-color: #fff; opacity: 1;"
-            value="{{ field.name }}{{ field.data.first_name }} {{ field.data.last_name}}" />
-          <span class="input-group-addon">
-            <button type="button" class="btn btn-primary btn-xs" ng-click="removeOrganizer($index)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
-          </span>
-        </div>
-        <div class="input-group col-sm-12">
-          <input
-            type="text"
-            class="form-control"
-            ng-model="field.comment"
-            placeholder="comment"
-            ng-disabled="!permissions.edit_organizers">
-        </div>
-        <div ng-repeat="role in field.roles" class="input-group col-sm-12">
-          <input 
-            type="text"
-            class="form-control"
-            readonly
-            style="background-color: #fff; opacity: 1;"
-            value="{{ role.name }}" />
-          <span class="input-group-addon">
-            <button type="button" class="btn btn-primary btn-xs" ng-click="field.roles.splice($index, 1)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
-          </span>
-        </div>
-        <div class="input-group col-sm-12">
-          <angucomplete-alt id="role{{ $index }}org{{ field._id }}"
-            placeholder="Assign a new event role"
-            pause="50"
-            selected-object="field.tmpRole"
-            local-data="eventRolesData"
-            search-fields="name"
-            title-field="name"
-            description-field="description"
-            minlength="0"
-            disable-input="!permissions.edit_organizers"
-            input-class="input-group col-sm-12">
-          </angucomplete-alt>
-
-          <span class="input-group-addon" ng-show="field.tmpRole">
-            <button type="button" class="btn btn-primary btn-xs" ng-click="addRole($index, field._id, field.tmpRole); field.tmpRole=null;" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
-          </span>
-        </div>
-      </div>
-
-      <div class="form-group" ng-show="permissions.edit_organizers">
-        <angucomplete-alt id="addOrganizer"
-          placeholder="Add another organizer"
-          pause="50"
-          selected-object="tmpUser"
-          remote-api-handler="fetchUserData"
-          title-field="name"
-          description-field="antenna_name"
-          minlength="1"
-          input-class="input-group col-sm-12">
-        </angucomplete-alt>
-        <span class="input-group-addon" ng-show="tmpUser">
-          <button type="button" class="btn btn-primary btn-xs" ng-click="addOrganizer(tmpUser)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
-        </span>
-
-      </div>
-    	<p ng-show="eventForm.organizers.$error.message">{{ eventForm.organizers.$error.message }}</p>
+    <button type="button" ng-click="showOrganizersModal()">Edit organizers</button>
+      <p ng-show="eventForm.organizers.$error.message">{{ eventForm.organizers.$error.message }}</p>
     </div>
   </div>
 
@@ -403,3 +337,90 @@
     <button type="submit" class="btn btn-success col-sm-6" ng-disabled="!permissions.edit">Submit!</button>
   </div>
 </form>
+
+
+<!-- The modal to edit organizers -->
+<div class="modal fade" id="organizersModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Edit Organziers</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" ng-repeat="field in event.organizers">
+          <div class="input-group">
+            <input
+              type="text"
+              class="form-control"
+              readonly
+              style="background-color: #fff; opacity: 1;"
+              value="{{ field.name }}{{ field.data.first_name }} {{ field.data.last_name}}" />
+            <span class="input-group-addon">
+              <button type="button" class="btn btn-primary btn-xs" ng-click="removeOrganizer($index)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
+            </span>
+          </div>
+          <div class="input-group col-sm-12">
+            <input
+              type="text"
+              class="form-control"
+              ng-model="field.comment"
+              placeholder="comment"
+              ng-disabled="!permissions.edit_organizers">
+          </div>
+          <div ng-repeat="role in field.roles" class="input-group col-sm-11 col-sm-offset-1">
+            <input 
+              type="text"
+              class="form-control"
+              readonly
+              style="background-color: #fff; opacity: 1;"
+              value="{{ role.name }}" />
+            <span class="input-group-addon">
+              <button type="button" class="btn btn-primary btn-xs" ng-click="field.roles.splice($index, 1)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-minus"></i></button>
+            </span>
+          </div>
+          <div class="input-group col-sm-11 col-sm-offset-1">
+            <angucomplete-alt id="role{{ $index }}org{{ field._id }}"
+              placeholder="Assign a new event role"
+              pause="50"
+              selected-object="field.tmpRole"
+              local-data="eventRolesData"
+              search-fields="name"
+              title-field="name"
+              description-field="description"
+              minlength="0"
+              disable-input="!permissions.edit_organizers"
+              input-class="input-group col-sm-12">
+            </angucomplete-alt>
+
+            <span class="input-group-addon" ng-show="field.tmpRole">
+              <button type="button" class="btn btn-primary btn-xs" ng-click="addRole($index, field._id, field.tmpRole); field.tmpRole=null;" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
+            </span>
+          </div>
+
+          <hr />
+        </div>
+
+        <div class="form-group" ng-show="permissions.edit_organizers">
+          <angucomplete-alt id="addOrganizer"
+            placeholder="Add another organizer"
+            pause="50"
+            selected-object="tmpUser"
+            remote-api-handler="fetchUserData"
+            title-field="name"
+            description-field="antenna_name"
+            minlength="1"
+            input-class="input-group col-sm-12">
+          </angucomplete-alt>
+          <span class="input-group-addon" ng-show="tmpUser">
+            <button type="button" class="btn btn-primary btn-xs" ng-click="addOrganizer(tmpUser)" ng-disabled="!permissions.edit_organizers"><i class="fa fa-plus"></i></button>
+          </span>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm btn-success" ng-click="hideOrganizersModal()"><i class="fa fa-plus-circle"></i> Accept</button>
+      </div>
+    </div>
+  </div>
+</div>
