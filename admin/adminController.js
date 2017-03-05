@@ -575,11 +575,11 @@
     };
 
     $scope.clearInput = (id) => {
-      if(!id)
+      if (!id) {
         $scope.$broadcast('angucomplete-alt:clearInput');
-      else
+      } else {
         $scope.$broadcast('angucomplete-alt:clearInput', id);
-
+      }
     };
 
     $scope.showModal = (objectToBind, description) => {
@@ -599,7 +599,8 @@
     };
 
     // General callback for calling the API for data
-    // Returns a promise for angucomplete-alt that is racing against the timeout, returning the data from the called url
+    // Returns a promise for angucomplete-alt that is racing against the timeout,
+    // returning the data from the called url
     var fetchData = (url, query, timeout) => {
 
       // Copied from the angular tutorial on how to add transformations
@@ -614,19 +615,19 @@
       return $http({
         url: url + `?limit=20&name=${query}`,
         method: 'GET',
-        transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
+        transformResponse: appendTransform($http.defaults.transformResponse, function (res) {
           var data = [];
-          if(res === null)
+          if (res === null)
             return data;
           res.rows.forEach((item) => {
             data.push({
               foreign_id: item.cell[0],
-              name: item.cell[1]
+              name: item.cell[1],
             });
           });
           return data;
         }),
-        timeout: timeout
+        timeout: timeout,
       });
     };
 
@@ -640,7 +641,7 @@
 
     $scope.fetchRoleData = (query, timeout) => {
       return fetchData(`/api/getRoles`, query, timeout);
-    };    
+    };
   }
 
   angular
