@@ -43,8 +43,6 @@
       <div class="col-sm-6">{{ roundtrip1 }}ms</div>
     </div>
   </div>
-
-  <button type="button" class="btn btn-primary" ng-click="fakeData()">Fake Data</button>
 </div>
 
 <div class="row">
@@ -70,7 +68,9 @@
         <tr ng-repeat="(statusIndex, status) in eventType.defaultLifecycle.status">
           <td><input ng-model="status.name" /></td>
           <td>
-            <button ng-click="showModal(status.visibility, 'visibility'); console.log('hahaha');">Change visibility</button>
+            <button ng-click="showModal(status.visibility, 'visibility');">Change visibility</button>
+            <button ng-click="showModal(status.edit_details, 'details')">Change who can edit the event</button>
+            <button ng-click="showModal(status.edit_organizers, 'organizers')">Change who can edit organizers</button>
           </td>
           <td>
             <button ng-click="eventType.defaultLifecycle.status.splice(statusIndex, 1)">Remove status</button>
@@ -87,6 +87,7 @@
           <td>From</td>
           <td>To</td>
           <td>Allowed for</td>
+          <td>Remove</td>
         </tr>
       </thead>
       <tbody>

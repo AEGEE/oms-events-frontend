@@ -426,10 +426,6 @@
       $scope.roundtrip2 = (new Date().getTime()) - start2;
     }).catch(showError);
 
-    $http.get(`${apiUrl}/boardview`).success((res) => {
-      console.log(res);
-    }).catch(showError);
-
     $http.get('/api/getRoles').success((allRoles) => {
       $scope.roles = [];
       allRoles.rows.forEach((item) => {
@@ -583,7 +579,16 @@
     };
 
     $scope.showModal = (objectToBind, description) => {
-      $scope.access = JSON.parse(JSON.stringify(objectToBind));
+      if(objectToBind)
+        $scope.access = JSON.parse(JSON.stringify(objectToBind));
+      else {
+        $scope.access = {
+          users: [],
+          roles: [],
+          bodies: [],
+          special: []
+        };
+      }
       $scope.access.description = description;
       $scope.access.save = () => {
         // Clear all inputs upon save
