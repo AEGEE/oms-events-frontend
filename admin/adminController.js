@@ -476,18 +476,22 @@
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. An potest, inquit ille, quicquam esse suavius quam nihil dolere? Qualis ista philosophia est, quae non interitum afferat pravitatis, sed sit contenta mediocritate vitiorum? Ergo id est convenienter naturae vivere, a natura discedere. Qua tu etiam inprudens utebare non numquam. Inde sermone vario sex illa a Dipylo stadia confecimus. ',
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Tum Quintus: Est plane, Piso, ut dicis, inquit. Nonne igitur tibi videntur, inquit, mala? Mihi enim erit isdem istis fortasse iam utendum. Et ille ridens: Video, inquit, quid agas; Duo Reges: constructio interrete. Paulum, cum regem Persem captum adduceret, eodem flumine invectio? Quo plebiscito decreta a senatu est consuli quaestio Cn. Videamus animi partes, quarum est conspectus illustrior; Mihi enim satis est, ipsis non satis. Satis est ad hoc responsum. Nondum autem explanatum satis, erat, quid maxime natura vellet.'];
 
+      const lifecycles = $scope.eventTypes.map(e => e.name);
+
       for (let i = 0; i < total; i++) {
         const title = titles[Math.floor(Math.random() * titles.length)];
         const start = randomDate(
           new Date(), new Date(new Date().setFullYear(new Date().getFullYear() + 3)));
         const end = new Date(start.getTime() + (Math.random() * 14 * 24 * 60 * 60 * 1000));
         const description = descriptions[Math.floor(Math.random() * descriptions.length)];
+        const eventType = lifecycles[Math.floor(Math.random() * lifecycles.length)];
 
         const event = {
           name: title,
           starts: start,
           ends: end,
           description,
+          type: eventType,
         };
 
         $http.post(apiUrl, event).success(eventAddHandler)
