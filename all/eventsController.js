@@ -85,52 +85,50 @@
       });
   }
 
-  const initTimeline = ($scope) => {
-    $scope.typequery = {
-      statutory: true,
-      non_statutory: true,
-      su: true,
-      local: true,
-    };
+  const initTimeline = ($scope, filterTypes = true) => {
+    $scope.typequery = {};
     $scope.currentTime = Date.now(); // get the current time for the timeline
 
     // Search callback to enable searching in name and description only
-    $scope.search = (row) => {
-      const statusTypes = [];
-      if ($scope.typequery.statutory) {
-        statusTypes.push('statutory');
-      }
-      if ($scope.typequery.non_statutory) {
-        statusTypes.push('non-statutory');
-      }
-      if ($scope.typequery.su) {
-        statusTypes.push('su');
-      }
-      if ($scope.typequery.local) {
-        statusTypes.push('local');
-      }
-
+    var searchQuery = (row) => {
       const query = angular.lowercase($scope.query);
 
-      return statusTypes.find(item => item === row.type) &&
-          (angular.lowercase(row.name).indexOf(query || '') !== -1 ||
+      return (angular.lowercase(row.name).indexOf(query || '') !== -1 ||
           angular.lowercase(row.description).indexOf(query || '') !== -1);
     };
+
+    var searchTypes = (row) => {
+      const statusTypes = Object
+        .keys($scope.typequery)
+        .filter(type => $scope.typequery[type]);
+
+      return statusTypes.find(item => item == row.type);
+    };
+
+    if(filterTypes)
+      $scope.search = (row) => searchTypes(row) && searchQuery(row);
+    else
+      $scope.search = (row) => searchQuery(row);
   };
 
   function ListingController($scope, $http) {
     initTimeline($scope);
 
+    $http.get(`${apiUrl}lifecycle/names`).success((response) => {
+      $scope.eventTypeNames = response.data;
+      $scope.eventTypeNames.forEach((name) => { $scope.typequery[name] = true; });
+    }).catch(showError);
+
     // Fetch events from backend
     // $('#loadingOverlay').show();
     $http.get(apiUrl).success((response) => {
-      $scope.events = response;
+      $scope.events = response.data;
       // $('#loadingOverlay').hide();
     }).catch(showError);
   }
 
   function MineController($scope, $http) {
-    initTimeline($scope);
+    initTimeline($scope, false);
 
     $scope.mine = true;
     $scope.events = [];
@@ -151,13 +149,8 @@
 
     // Fetch event from backend
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.event = res;
-      console.log(res);
-    }).catch(showError);
-
-    // TODO integrate this into the /single requers
-    $http.get(`${apiUrl}single/${$stateParams.id}/rights`).success((res) => {
-      $scope.permissions = res.can;
+      $scope.event = res.data;
+      $scope.permissions = res.permissions.can;
     }).catch(showError);
   }
 
@@ -167,9 +160,9 @@
     // Fetch event again to get form fields
     // Also fetch if the user already has put an applicaiton
     const reqPromise = $http.get(`${apiUrl}single/${$stateParams.id}/participants/mine`);
-    $http.get(`${apiUrl}single/${$stateParams.id}`).success((event) => {
+    $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
       // Save fetched event to scope
-      $scope.event = event;
+      $scope.event = res.data;
 
       // Poll for existing application
       reqPromise.success((res) => {
@@ -224,32 +217,26 @@
 
   function OrganizersController($scope, $http, $stateParams) {
     $scope.organizer_view = true;
-    $scope.order = 'user.main_organizer';
-    $scope.setSearch = (local) => {
-      if (local) {
-        $scope.query_antenna = local.foreign_id;
-      } else {
-        $scope.query_antenna = '';
-      }
-    };
 
     $scope.search = (row) => {
       const query = angular.lowercase($scope.query_name);
-      const name = angular.lowercase(`${row.first_name} ' + ${row.last_name}`);
-      return (!$scope.query_antenna || row.antenna_id === $scope.query_antenna)
-        && (!$scope.query_name || name.indexOf(query) !== -1);
+      const name = angular.lowercase(`${row.data.first_name} ' + ${row.data.last_name}`);
+      const rolematch = row.roles.some((role) => {
+        return $scope.roles.some((scoperole) => {
+          return scoperole.search && role._id === scoperole._id;
+        });
+      });
+      return rolematch && (!$scope.query_name || name.indexOf(query) !== -1);
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.users = res.organizers;
-      $scope.locals = [];
-      res.organizers.forEach((user) => {
-        if (!$scope.locals.some(local => local.foreign_id === user.antenna_id)) {
-          $scope.locals.push({
-            foreign_id: user.antenna_id,
-            name: user.antenna_name,
-          });
-        }
+      $scope.users = res.data.organizers;
+    }).catch(showError);
+
+    $http.get(`${apiUrl}eventroles`).success((res) => {
+      $scope.roles = res.data.map((item) => {
+        item.search = true;
+        return item;
       });
     }).catch(showError);
   }
