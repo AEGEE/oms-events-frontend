@@ -197,6 +197,54 @@
       });
     };
 
+    $scope.showBodiesModal = () => {
+      $('#bodiesModal').modal('show');
+    };
+    $scope.hideBodiesModal = () => {
+      $('#bodiesModal').modal('hide');
+    };
+
+    $scope.addBody = (body) => {
+      $scope.event.organizing_locals.push(body.originalObject);
+      $scope.$broadcast('angucomplete-alt:clearInput', `addBody`);
+    };
+
+    $scope.removeBody = (index) => {
+      if($scope.event.organizing_locals.length > 1) {
+        $scope.event.organizing_locals.splice(index, 1);
+      }
+    };
+
+    $scope.fetchBodiesData = (query, timeout) => {
+
+      // Copied from the angular tutorial on how to add transformations
+      function appendTransform(defaults, transform) {
+        // We can't guarantee that the default transformation is an array
+        defaults = angular.isArray(defaults) ? defaults : [defaults];
+
+        // Append the new transformation to the defaults
+        return defaults.concat(transform);
+      }
+
+      return $http({
+        url: `/api/getAntennae?limit=20&name=${query}`,
+        method: 'GET',
+        transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
+          var data = [];
+          if(res === null)
+            return data;
+          res.rows.forEach((item) => {
+            data.push({
+              foreign_id: item.cell[0],
+              name: item.cell[1]
+            });
+          });
+          return data;
+        }),
+        timeout: timeout
+      });
+    };
+
     // If no route params are given, the user wants to create a new event -> Post
     $scope.submitForm = () => {
       $http.post(apiUrl, $scope.event).success((response) => {
