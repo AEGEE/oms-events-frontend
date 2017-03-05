@@ -122,7 +122,7 @@
     // Fetch events from backend
     // $('#loadingOverlay').show();
     $http.get(apiUrl).success((response) => {
-      $scope.events = response;
+      $scope.events = response.data;
       // $('#loadingOverlay').hide();
     }).catch(showError);
   }
