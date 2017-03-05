@@ -149,12 +149,8 @@
 
     // Fetch event from backend
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.event = res;
-    }).catch(showError);
-
-    // TODO integrate this into the /single requers
-    $http.get(`${apiUrl}single/${$stateParams.id}/rights`).success((res) => {
-      $scope.permissions = res.can;
+      $scope.event = res.data;
+      $scope.permissions = res.permissions.can;
     }).catch(showError);
   }
 
@@ -164,9 +160,9 @@
     // Fetch event again to get form fields
     // Also fetch if the user already has put an applicaiton
     const reqPromise = $http.get(`${apiUrl}single/${$stateParams.id}/participants/mine`);
-    $http.get(`${apiUrl}single/${$stateParams.id}`).success((event) => {
+    $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
       // Save fetched event to scope
-      $scope.event = event;
+      $scope.event = res.data;
 
       // Poll for existing application
       reqPromise.success((res) => {
@@ -230,13 +226,11 @@
           return scoperole.search && role._id === scoperole._id;
         });
       });
-      return rolematch
-        && (!$scope.query_name || name.indexOf(query) !== -1);
+      return rolematch && (!$scope.query_name || name.indexOf(query) !== -1);
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.users = res.organizers;
-      console.log($scope.users);
+      $scope.users = res.data.organizers;
     }).catch(showError);
 
     $http.get(`${apiUrl}eventroles`).success((res) => {
@@ -244,7 +238,6 @@
         item.search = true;
         return item;
       });
-      console.log($scope.roles);
     }).catch(showError);
   }
 

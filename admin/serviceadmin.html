@@ -62,7 +62,7 @@
       <thead>
         <tr>
           <td>Name</td>
-          <td>Visibility filter</td>
+          <td>Access rights</td>
           <td>Remove</td>
         </tr>
       </thead>
@@ -70,100 +70,7 @@
         <tr ng-repeat="(statusIndex, status) in eventType.defaultLifecycle.status">
           <td><input ng-model="status.name" /></td>
           <td>
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td>Users</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="user in status.visibility.users">
-                        {{ user }}
-                        <a href="#" ng-click="status.visibility.users.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="members{{ statusIndex }}"
-                      placeholder="Search members"
-                      pause="50"
-                      selected-object="tmpUser"
-                      remote-api-handler="fetchUserData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="status.visibility.users.push(tmpUser.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Roles</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="role in status.visibility.roles">
-                        {{ role }}
-                        <a href="#" ng-click="status.visibility.roles.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="roles{{ statusIndex }}"
-                      placeholder="Search Roles"
-                      pause="50"
-                      selected-object="tmpRole"
-                      remote-api-handler="fetchRoleData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="status.visibility.roles.push(tmpRole.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Bodies</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="body in status.visibility.bodies">
-                        {{ body }}
-                        <a href="#" ng-click="status.visibility.bodies.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="bodies{{ statusIndex }}"
-                      placeholder="Search bodies"
-                      pause="50"
-                      selected-object="tmpBody"
-                      remote-api-handler="fetchBodyData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="status.visibility.bodies.push(tmpBody.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Special</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="special in status.visibility.special">
-                        {{ special }}
-                        <a href="#" ng-click="status.visibility.special.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-
-                    <angucomplete-alt id="special{{ statusIndex }}"
-                      placeholder="Search special roles"
-                      pause="50"
-                      selected-object="tmpSpecial"
-                      local-data="specialRolesData"
-                      search-fields="name"
-                      title-field="name"
-                      description-field="description"
-                      minlength="0"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>                   
-                    <button ng-click="status.visibility.special.push(tmpSpecial.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <button ng-click="showModal(status.visibility, 'visibility'); console.log('hahaha');">Change visibility</button>
           </td>
           <td>
             <button ng-click="eventType.defaultLifecycle.status.splice(statusIndex, 1)">Remove status</button>
@@ -191,99 +98,7 @@
             <select ng-model="transition.to" ng-options="status.name as status.name for status in eventType.defaultLifecycle.status" />
           </td>
           <td>
-            <table class="table">
-              <tbody>
-                <tr>
-                  <td>Users</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="user in transition.allowedFor.users">
-                        {{ user }}
-                        <a href="#" ng-click="transition.allowedFor.users.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="membersT{{ transitionIndex }}"
-                      placeholder="Search members"
-                      pause="50"
-                      selected-object="tmpUser"
-                      remote-api-handler="fetchUserData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="transition.allowedFor.users.push(tmpUser.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Roles</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="role in transition.allowedFor.roles">
-                        {{ role }}
-                        <a href="#" ng-click="transition.allowedFor.roles.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="rolesT{{ transitionIndex }}"
-                      placeholder="Search Roles"
-                      pause="50"
-                      selected-object="tmpRole"
-                      remote-api-handler="fetchRoleData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="transition.allowedFor.roles.push(tmpRole.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Bodies</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="body in transition.allowedFor.bodies">
-                        {{ body }}
-                        <a href="#" ng-click="transition.allowedFor.bodies.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="bodiesT{{ transitionIndex }}"
-                      placeholder="Search bodies"
-                      pause="50"
-                      selected-object="tmpBody"
-                      remote-api-handler="fetchBodyData"
-                      title-field="name"
-                      description-field=""
-                      minlength="1"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>
-                    <button ng-click="transition.allowedFor.bodies.push(tmpBody.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Special</td>
-                  <td>
-                    <ul>
-                      <li ng-repeat="special in transition.allowedFor.special">
-                        {{ special }}
-                        <a href="#" ng-click="transition.allowedFor.special.splice($index, 1)">x</a>
-                      </li>
-                    </ul>
-                    <angucomplete-alt id="specialT{{ transitionIndex }}"
-                      placeholder="Search special roles"
-                      pause="50"
-                      selected-object="tmpSpecial"
-                      local-data="specialRolesData"
-                      search-fields="name"
-                      title-field="name"
-                      description-field="description"
-                      minlength="0"
-                      input-class="form-control form-control-small">
-                    </angucomplete-alt>                   
-                    <button ng-click="transition.allowedFor.special.push(tmpSpecial.originalObject.name)">Add</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <button ng-click="showModal(transition.allowedFor, 'transition permissions')">Change transition permissions</button>
           </td>
           <td>
             <button ng-click="eventType.defaultLifecycle.transitions.splice(transitionIndex, 1)">Remove transition</button>
@@ -428,4 +243,125 @@
       </tr>
     </tbody>
   </table>-->
+</div>
+
+
+
+
+<!-- Modal to show one access object
+Each access object should have the properties
+- description (string)
+- save (function, stores the changes to the global access object in the correct way)
+- users (arr)
+- roles (arr)
+- bodies (arr)
+- special (arr)
+ -->
+<div class="modal fade" id="accessModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title">Edit {{ access.description }}</h4>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>Users</td>
+              <td>
+                <ul>
+                  <li ng-repeat="user in access.users">
+                    {{ user }}
+                    <a href="#" ng-click="access.users.splice($index, 1)">x</a>
+                  </li>
+                </ul>
+                <angucomplete-alt id="membersAutocomplete"
+                  placeholder="Search members"
+                  pause="50"
+                  selected-object="tmpUser"
+                  remote-api-handler="fetchUserData"
+                  title-field="name"
+                  description-field=""
+                  minlength="1"
+                  input-class="form-control form-control-small">
+                </angucomplete-alt>
+                <button ng-click="access.users.push(tmpUser.originalObject.name); clearInput('membersAutocomplete');">Add</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Roles</td>
+              <td>
+                <ul>
+                  <li ng-repeat="role in access.roles">
+                    {{ role }}
+                    <a href="#" ng-click="access.roles.splice($index, 1)">x</a>
+                  </li>
+                </ul>
+                <angucomplete-alt id="rolesAutocomplete"
+                  placeholder="Search Roles"
+                  pause="50"
+                  selected-object="tmpRole"
+                  remote-api-handler="fetchRoleData"
+                  title-field="name"
+                  description-field=""
+                  minlength="1"
+                  input-class="form-control form-control-small">
+                </angucomplete-alt>
+                <button ng-click="access.roles.push(tmpRole.originalObject.name); clearInput('rolesAutocomplete');">Add</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Bodies</td>
+              <td>
+                <ul>
+                  <li ng-repeat="body in access.bodies">
+                    {{ body }}
+                    <a href="#" ng-click="access.bodies.splice($index, 1)">x</a>
+                  </li>
+                </ul>
+                <angucomplete-alt id="bodiesAutocomplete"
+                  placeholder="Search bodies"
+                  pause="50"
+                  selected-object="tmpBody"
+                  remote-api-handler="fetchBodyData"
+                  title-field="name"
+                  description-field=""
+                  minlength="1"
+                  input-class="form-control form-control-small">
+                </angucomplete-alt>
+                <button ng-click="access.bodies.push(tmpBody.originalObject.name); clearInput('bodiesAutocomplete');">Add</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Special</td>
+              <td>
+                <ul>
+                  <li ng-repeat="special in access.special">
+                    {{ special }}
+                    <a href="#" ng-click="access.special.splice($index, 1)">x</a>
+                  </li>
+                </ul>
+                <angucomplete-alt id="specialAutocomplete"
+                  placeholder="Search special roles"
+                  pause="50"
+                  selected-object="tmpSpecial"
+                  local-data="specialRolesData"
+                  search-fields="name"
+                  title-field="name"
+                  description-field="description"
+                  minlength="0"
+                  input-class="form-control form-control-small">
+                </angucomplete-alt>                   
+                <button ng-click="access.special.push(tmpSpecial.originalObject.name); clearInput('specialAutocomplete');">Add</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-sm btn-success" ng-click="access.save()"><i class="fa fa-plus-circle"></i> Accept</button>
+      </div>
+    </div>
+  </div>
 </div>

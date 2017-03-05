@@ -570,6 +570,30 @@
       }).catch(showError);
     };
 
+    $scope.clearInput = (id) => {
+      if(!id)
+        $scope.$broadcast('angucomplete-alt:clearInput');
+      else
+        $scope.$broadcast('angucomplete-alt:clearInput', id);
+
+    };
+
+    $scope.showModal = (objectToBind, description) => {
+      $scope.access = JSON.parse(JSON.stringify(objectToBind));
+      $scope.access.description = description;
+      $scope.access.save = () => {
+        // Clear all inputs upon save
+        $scope.clearInput();
+        // Not sure if this is necessary
+        objectToBind.users = $scope.access.users;
+        objectToBind.roles = $scope.access.roles;
+        objectToBind.special = $scope.access.special;
+        objectToBind.bodies = $scope.access.bodies;
+        $('#accessModal').modal('hide');
+      };
+      $('#accessModal').modal('show');
+    };
+
     // General callback for calling the API for data
     // Returns a promise for angucomplete-alt that is racing against the timeout, returning the data from the called url
     var fetchData = (url, query, timeout) => {

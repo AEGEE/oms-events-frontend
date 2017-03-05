@@ -14,7 +14,7 @@
     <div class="profile-highlight">
       <h4>Admin Panel</h4>
       <div class="m-b-5" ng-if="permissions.edit">
-        <a ui-sref="app.eventadmin.edit({ id: event.id })" >Edit event</a>
+        <a ui-sref="app.eventadmin.edit({ id: event.id })">Edit event</a>
       </div>
       <div class="m-b-5" ng-if="permissions.view_applications">
         <a ui-sref="app.eventadmin.approve_participants({ id: event.id })">View applications</a>
@@ -23,7 +23,7 @@
         <a ui-sref="app.events.organizers({ id: event.id })">See organizers</a>
       </div>
       <div class="m-b-5">
-        <a ui-sref="app.events.participants({ id: event.id })" >See participants</a>
+        <a ui-sref="app.events.participants({ id: event.id })">See participants</a>
       </div>
     </div>
   </div>
