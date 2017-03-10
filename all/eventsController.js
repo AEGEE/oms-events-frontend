@@ -135,12 +135,12 @@
 
     // Fetch events where user is organizer on
     $http.get(`${apiUrl}mine/byOrganizer`).success((response) => {
-      $scope.events.push.apply($scope.events, response);
+      $scope.events.push.apply($scope.events, response.data);
     }).catch(showError);
 
     // And also get all those the user has applied to
     $http.get(`${apiUrl}mine/byApplication`).success((response) => {
-      $scope.events.push.apply($scope.events, response);
+      $scope.events.push.apply($scope.events, response.data);
     }).catch(showError);
   }
 
@@ -230,11 +230,11 @@
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.users = res.data.organizers;
+      $scope.users = res.data[0].organizers;
     }).catch(showError);
 
     $http.get(`${apiUrl}eventroles`).success((res) => {
-      $scope.roles = res.data.map((item) => {
+      $scope.roles = res.data[0].map((item) => {
         item.search = true;
         return item;
       });
@@ -255,7 +255,7 @@
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}/participants?status=accepted`).success((res) => {
-      $scope.users = res;
+      $scope.users = res.data;
       $scope.locals = [];
       res.forEach((user) => {
         if (!$scope.locals.some(local => local.foreign_id === user.antenna_id)) {
