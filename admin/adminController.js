@@ -255,7 +255,7 @@
           time: 8000,
           class_name: 'my-sticky-class',
         });
-        $state.go('app.events.single', { id: response.event.id });
+        $state.go('app.events.single', { id: response.data[0].id });
       }).catch((err) => {
         showError(err);
 
@@ -356,14 +356,14 @@
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((event) => {
       $scope.event = event;
       fetchApplications.success((res) => {
-        $scope.event.applications = res;
+        $scope.event.applications = res.data;
         console.log(res);
       });
     }).catch(showError);
 
     // Get the rights this user has on this event
     $http.get(`${apiUrl}single/${$stateParams.id}/rights`).success((res) => {
-      $scope.permissions = res.can;
+      $scope.permissions = res.data[0].can;
       console.log(res);
     }).catch(showError);
 
@@ -413,7 +413,7 @@
 
   function ApproveEventsController($scope, $http) {
     $http.get(`${apiUrl}mine/approvable`).success((response) => {
-      $scope.events = response;
+      $scope.events = response.data;
 
       $scope.events.forEach((event) => {
         event.status = event.lifecycle.status.find(s => s._id === event.status);
@@ -443,7 +443,7 @@
 
   function BoardviewController($scope, $http) {
     $http.get(`${apiUrl}boardview`).success((response) => {
-      $scope.events = response.events;
+      $scope.events = response.data;
     }).catch(showError);
 
     $scope.submitComment = (event, application) => {
@@ -467,13 +467,13 @@
   function ServiceAdminController($scope, $http) {
     const start1 = new Date().getTime();
     $http.get(`${apiUrl}getUser`).success((response) => {
-      $scope.user = response;
+      $scope.user = response.data[0];
       $scope.roundtrip1 = (new Date().getTime()) - start1;
     }).catch(showError);
 
     const start2 = new Date().getTime();
     $http.get(`${apiUrl}status`).success((response) => {
-      $scope.status = response;
+      $scope.status = response.data[0];
       $scope.roundtrip2 = (new Date().getTime()) - start2;
     }).catch(showError);
 
