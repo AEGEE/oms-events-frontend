@@ -50,6 +50,15 @@
             </tr>
 
             <tr>
+              <td class="field">Organizing locals</td>
+              <td>
+                <ul>
+                  <li ng-repeat="local in event.organizing_locals">{{ local.name }}</li>
+                </ul>
+              </td>
+            </tr>
+
+            <tr>
               <td class="field">Fee</td>
               <td ng-show="event.fee">{{ event.fee|number:2 }} €</td>
               <td ng-show="!event.fee">Free as your spirit</td>
