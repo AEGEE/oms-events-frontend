@@ -13,17 +13,8 @@
     <!-- TODO check if user is organizer, otherwise don't show -->
     <div class="profile-highlight">
       <h4>Admin Panel</h4>
-      <div class="m-b-5" ng-if="permissions.edit">
-        <a ui-sref="app.eventadmin.edit({ id: event.id })">Edit event</a>
-      </div>
-      <div class="m-b-5" ng-if="permissions.view_applications">
-        <a ui-sref="app.eventadmin.approve_participants({ id: event.id })">View applications</a>
-      </div>
-      <div class="m-b-5">
-        <a ui-sref="app.events.organizers({ id: event.id })">See organizers</a>
-      </div>
-      <div class="m-b-5">
-        <a ui-sref="app.events.participants({ id: event.id })">See participants</a>
+      <div class="m-b-5" ng-repeat="link in event.links">
+        <a ui-sref="{{ link.controller }}({{ { id: event.id } }})">{{ link.displayName }}</a>
       </div>
     </div>
   </div>
@@ -56,6 +47,15 @@
             <tr>
               <td class="field">Description</td>
               <td><p style="white-space: pre-wrap;" ng-bind="event.description"></p></td>
+            </tr>
+
+            <tr>
+              <td class="field">Organizing locals</td>
+              <td>
+                <ul>
+                  <li ng-repeat="local in event.organizing_locals">{{ local.name }}</li>
+                </ul>
+              </td>
             </tr>
 
             <tr>
