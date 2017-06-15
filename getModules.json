@@ -1,11 +1,15 @@
-[{
-	"name": "All events",
-	"code": "events",
-	"module_link": "frontend/all/eventsController.js",
-	"icon": "fa fa-ticket"
-}, {
-	"name": "Event admin",
-	"code": "eventadmin",
-	"module_link": "frontend/admin/adminController.js",
-	"icon": "fa fa-wrench"
-}]
+{
+  "name": "OMS Events",
+  "code": "omsevents",
+  "pages": [{
+  	"name": "All events",
+  	"code": "events",
+  	"module_link": "frontend/all/eventsController.js",
+  	"icon": "fa fa-ticket"
+  }, {
+  	"name": "Event admin",
+  	"code": "eventadmin",
+  	"module_link": "frontend/admin/adminController.js",
+  	"icon": "fa fa-wrench"
+  }]
+}
