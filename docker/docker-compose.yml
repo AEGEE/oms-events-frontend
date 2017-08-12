@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+    omsevents-frontend:
+        image: aegee/omsevents-frontend:dev
+        volumes:
+            - "./oms-events-frontend:/usr/app/frontend:ro"
+            - omsevents_media:/usr/app/media
+        expose:
+            - "8083"
+        labels:
+            - "traefik.frontend.rule=HostRegexp:{domain:[a-z]+};PathPrefix:/services/omsevents;PathPrefixStrip:/services/omsevents"
+            - "traefik.frontend.priority=100"
+            - "traefik.port=8083"
+            - "traefik.backend=omsevents-frontend"
+            - "traefik.enable=true"
+            - "registry.modules=/frontend/getModules.json"
+
+volumes:
+    omsevents_media:
+        driver: "local"
