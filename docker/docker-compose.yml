@@ -12,7 +12,7 @@ services:
         expose:
             - "8083"
         labels:
-            - "traefik.frontend.rule=HostRegexp:{domain:[a-z]+};PathPrefix:/services/omsevents;PathPrefixStrip:/services/omsevents"
+            - "traefik.frontend.rule=HostRegexp:{domain:[a-z0-9.]+};PathPrefix:/services/omsevents;PathPrefixStrip:/services/omsevents"
             - "traefik.frontend.priority=100"
             - "traefik.port=8083"
             - "traefik.backend=omsevents-frontend"
@@ -23,3 +23,8 @@ services:
 volumes:
     omsevents_media:
         driver: "local"
+
+networks:
+  default:
+    external:
+      name: OMS

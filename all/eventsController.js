@@ -230,11 +230,11 @@
     };
 
     $http.get(`${apiUrl}single/${$stateParams.id}`).success((res) => {
-      $scope.users = res.data[0].organizers;
+      $scope.users = res.data.organizers;
     }).catch(showError);
 
     $http.get(`${apiUrl}eventroles`).success((res) => {
-      $scope.roles = res.data[0].map((item) => {
+      $scope.roles = res.data.map((item) => {
         item.search = true;
         return item;
       });
