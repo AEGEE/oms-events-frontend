@@ -18,6 +18,7 @@ services:
             - "traefik.backend=omsevents-frontend"
             - "traefik.enable=true"
             - "registry.modules=/frontend/getModules.json"
+            - "registry.status=/frontend/status.json"
 
 volumes:
     omsevents_media:
