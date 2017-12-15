@@ -178,17 +178,20 @@
       }
 
       return $http({
-        url: `/api/getUsers?limit=20&name=${query}`,
+        url: `/api/users`,
         method: 'GET',
+        params: {
+          name: query,
+          per_page: 10
+        },
         transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
           var data = [];
-          if(res === null)
+          if(!res.data)
             return data;
-          res.rows.forEach((item) => {
+          res.data.forEach((item) => {
             data.push({
-              foreign_id: item.cell[0],
-              name: item.cell[1],
-              antenna_name: item.cell[5]
+              foreign_id: item.id,
+              name: item.first_name + ' ' + item.last_name
             });
           });
           return data;
@@ -227,16 +230,20 @@
       }
 
       return $http({
-        url: `/api/getAntennae?limit=20&name=${query}`,
+        url: `/api/bodies`,
         method: 'GET',
+        params: {
+          name: query,
+          per_page: 10
+        },
         transformResponse: appendTransform($http.defaults.transformResponse, function(res) {
           var data = [];
           if(res === null)
             return data;
           res.rows.forEach((item) => {
             data.push({
-              foreign_id: item.cell[0],
-              name: item.cell[1]
+              foreign_id: item.id,
+              name: item.name
             });
           });
           return data;
@@ -273,7 +280,7 @@
       $scope.newevent = false;
 
       // Add callbacks to delete the event
-      const resourceURL = `${apiUrl}/single/${$stateParams.id}`;
+      const resourceURL = `${apiUrl}single/${$stateParams.id}`;
 
       // Add callbacks to request approval
       $scope.setApproval = (newStatus) => {
@@ -325,7 +332,7 @@
       $scope.uploadFile.alias = 'head_image';
       $scope.uploadFile.autoUpload = true;
       $scope.uploadFile.headers = {
-        'X-Auth-Token': xAuthToken,
+        'X-Auth-Token': window.localStorage.getItem("X-Auth-Token"),
       };
 
       $scope.uploadFile.onCompleteAll = (res) => {
@@ -477,15 +484,9 @@
       $scope.roundtrip2 = (new Date().getTime()) - start2;
     }).catch(showError);
 
-    $http.get('/api/getRoles').success((allRoles) => {
-      $scope.roles = [];
-      allRoles.rows.forEach((item) => {
-        $scope.roles.push({
-          id: item.cell[0],
-          name: item.cell[1],
-        });
-      });
-    }).catch(showError);
+    // TODO rewrite after core has permissions
+    $scope.roles = [];
+
 
     $http.get(`${apiUrl}lifecycle`).success((response) => {
       $scope.eventTypes = response.data;
@@ -669,34 +670,40 @@
       }
 
       return $http({
-        url: url + `?limit=20&name=${query}`,
+        url: url,
         method: 'GET',
+        params: {
+          per_page: 10,
+          name: query
+        },
         transformResponse: appendTransform($http.defaults.transformResponse, function (res) {
           var data = [];
-          if (res === null)
-            return data;
-          res.rows.forEach((item) => {
-            data.push({
-              foreign_id: item.cell[0],
-              name: item.cell[1],
-            });
+          if (!res)
+            return [];
+          return res.data.map((item) => {
+            var tmp = {
+              foreign_id: item.id,
+              name: item.name,
+            };
+            if(item.first_name)
+              tmp.name = item.first_name + ' ' + item.last_name;
+            return tmp;
           });
-          return data;
         }),
         timeout: timeout,
       });
     };
 
     $scope.fetchUserData = (query, timeout) => {
-      return fetchData(`/api/getUsers`, query, timeout);
+      return fetchData(`/api/users`, query, timeout);
     };
 
     $scope.fetchBodyData = (query, timeout) => {
-      return fetchData(`/api/getAntennae`, query, timeout);
+      return fetchData(`/api/bodies`, query, timeout);
     };
 
     $scope.fetchRoleData = (query, timeout) => {
-      return fetchData(`/api/getRoles`, query, timeout);
+      return; // TODO implement when core has permissions
     };
   }
 
