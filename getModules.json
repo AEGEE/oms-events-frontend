@@ -1,6 +1,6 @@
 {
   "name": "OMS Events",
-  "code": "omsevents",
+  "code": "oms-events",
   "pages": [{
   	"name": "All events",
   	"code": "events",
